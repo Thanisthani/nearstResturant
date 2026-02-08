@@ -73,3 +73,9 @@ yarn-error.log
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+yarn.lock
+# react-native-config codegen
+ios/tmp.xcconfig
+
+.env*
+.env

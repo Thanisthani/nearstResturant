@@ -23,6 +23,12 @@ target 'qlubAssignment' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+   rn_maps_path = '../node_modules/react-native-maps'
+  pod 'react-native-maps/Google', :path => rn_maps_path
+
+  pod 'react-native-config', :path => '../node_modules/react-native-config'
+  pod 'react-native-config/Extension', :path => '../node_modules/react-native-config'
+
   post_install do |installer|
     react_native_post_install(
       installer,
