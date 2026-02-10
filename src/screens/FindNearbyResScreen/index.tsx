@@ -86,21 +86,6 @@ const FindNearbyResScreen = () => {
     return true;
   };
 
-  // Get address from coordinates using reverse geocoding
-  const getAddressFromCoords = async (lat: number, lng: number) => {
-    try {
-      const response = await axios.get(
-        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${Config.GOOGLE_MAPS_API_KEY}`,
-      );
-      if (response.data.results && response.data.results.length > 0) {
-        return response.data.results[0].formatted_address;
-      }
-      return 'Current Location';
-    } catch (error) {
-      console.error('Error getting address:', error);
-      return 'Current Location';
-    }
-  };
 
   // Get user's current location
   const getCurrentLocation = async () => {
