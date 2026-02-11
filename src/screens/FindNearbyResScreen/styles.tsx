@@ -37,7 +37,7 @@ export const styles = StyleSheet.create({
   locationRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
   },
   locationText: {
     fontFamily: 'Manrope-Bold',
@@ -112,7 +112,6 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: verticalScale(12),
-    paddingHorizontal: moderateScale(16),
     zIndex: 1,
   },
   filterButton: {
@@ -128,6 +127,7 @@ export const styles = StyleSheet.create({
   },
   categoryScroll: {
     flex: 1,
+    paddingHorizontal: moderateScale(16),
   },
   categoryButton: {
     flexDirection: 'row',
@@ -197,5 +197,63 @@ export const styles = StyleSheet.create({
     fontSize: moderateScale(14),
     fontFamily: 'Manrope-Bold',
     marginLeft: moderateScale(8),
+  },
+  markerFixed: {
+    left: '50%',
+    marginLeft: -moderateScale(24),
+    marginTop: -moderateScale(48),
+    position: 'absolute',
+    top: '50%',
+    zIndex: 10,
+  },
+  marker: {
+    height: moderateScale(48),
+    width: moderateScale(48),
+  },
+  pickerActionContainer: {
+    position: 'absolute',
+    bottom: verticalScale(40),
+    alignSelf: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '90%',
+    zIndex: 10,
+  },
+  setButton: {
+    backgroundColor: '#7210FF',
+    paddingHorizontal: moderateScale(25),
+    paddingVertical: moderateScale(10),
+    borderRadius: moderateScale(30),
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    marginHorizontal: moderateScale(5),
+  },
+  setButtonText: {
+    color: '#FFFFFF',
+    fontSize: moderateScale(14),
+    fontFamily: 'Manrope-Bold',
+  },
+  cancelButton: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: moderateScale(25),
+    paddingVertical: moderateScale(10),
+    borderRadius: moderateScale(30),
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    borderWidth: 1,
+    borderColor: '#E8EAED',
+    marginHorizontal: moderateScale(5),
+  },
+  cancelButtonText: {
+    color: '#1A1A1A',
+    fontSize: moderateScale(14),
+    fontFamily: 'Manrope-Bold',
   },
 });

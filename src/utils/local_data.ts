@@ -3,5 +3,4 @@ export const categories = [
   { key: 'cafe', label: 'Cafe' },
   { key: 'bakery', label: 'Bakery' },
   { key: 'bar', label: 'Bar' },
-  { key: 'meal_takeaway', label: 'Takeaway' },
 ];

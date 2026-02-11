@@ -11,12 +11,10 @@ export const styles = StyleSheet.create({
     borderTopStartRadius: 30,
     flex: 1,
   },
-  contentWrapper: {
-    paddingHorizontal: moderateScale(16),
-  },
   cardContainer: {
     marginBottom: moderateScale(20),
     backgroundColor: '#fff',
+    paddingHorizontal: moderateScale(16),
   },
   restaurantImage: {
     width: '100%',
@@ -89,7 +87,7 @@ export const styles = StyleSheet.create({
     marginLeft: moderateScale(8),
   },
   divider: {
-    height: 1,
+    height: 5,
     backgroundColor: '#F0F0F0',
     marginVertical: moderateScale(16),
   },

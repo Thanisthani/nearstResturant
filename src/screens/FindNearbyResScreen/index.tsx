@@ -3,28 +3,29 @@ import {
   Text,
   TouchableOpacity,
   ActivityIndicator,
-  ScrollView,
-  StyleSheet,
+  FlatList,
   PermissionsAndroid,
   Platform,
   Alert,
+  Keyboard,
 } from 'react-native';
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, {
+  useState,
+  useRef,
+  useCallback,
+  useEffect,
+  useMemo,
+} from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from './styles';
 import {
+  List,
   ChevronLeft,
   MapPin,
   ChevronDown,
   Search,
-  SlidersHorizontal,
-  Coffee,
-  Utensils,
-  Beer,
-  ShoppingBag,
-  List,
 } from 'lucide-react-native';
-import { moderateScale, verticalScale } from 'react-native-size-matters';
+import { moderateScale } from 'react-native-size-matters';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import Config from 'react-native-config';
 import axios from 'axios';
@@ -32,8 +33,15 @@ import { categories } from '../../utils/local_data';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import RestaurantMarker from '../../components/RestaurantMarker';
 import ResturantListBottomSheet from '../../components/ResturantListBottomSheet';
+import SortDropdown from '../../components/SortDropdown';
+import LocationDropdown from '../../components/LocationDropdown';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import Geolocation from '@react-native-community/geolocation';
+import Bakery from '../../assets/icons/ic_bakery.svg';
+import Bar from '../../assets/icons/ic_bar.svg';
+import Cafe from '../../assets/icons/ic_cafe.svg';
+import Restaurant from '../../assets/icons/ic_restaurant.svg';
+import Filter from '../../assets/icons/ic_filter.svg';
 
 const FindNearbyResScreen = () => {
   const [selectedAddress, setSelectedAddress] = useState(
@@ -46,8 +54,59 @@ const FindNearbyResScreen = () => {
     lat: 25.1972,
     lng: 55.2744,
   });
+  const [showSortDropdown, setShowSortDropdown] = useState(false);
+  const [showLocationDropdown, setShowLocationDropdown] = useState(false);
+  const [sortBy, setSortBy] = useState<'rating' | 'distance' | null>(null);
+  const [isPickingLocation, setIsPickingLocation] = useState(false);
+  const [tempCoords, setTempCoords] = useState({
+    lat: 25.1972,
+    lng: 55.2744,
+  });
+
   const mapRef = useRef<MapView>(null);
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const googlePlacesRef = useRef<any>(null);
+
+  // Haversine formula to calculate distance between two points in km
+  const calculateDistance = (
+    lat1: number,
+    lon1: number,
+    lat2: number,
+    lon2: number,
+  ) => {
+    const p = 0.017453292519943295; // Math.PI / 180
+    const c = Math.cos;
+    const a =
+      0.5 -
+      c((lat2 - lat1) * p) / 2 +
+      (c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p))) / 2;
+
+    return 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
+  };
+
+  const sortedRestaurants = useMemo(() => {
+    let result = [...restaurants];
+    if (sortBy === 'rating') {
+      result.sort((a: any, b: any) => (b.rating || 0) - (a.rating || 0));
+    } else if (sortBy === 'distance') {
+      result.sort((a: any, b: any) => {
+        const distA = calculateDistance(
+          currentCoords.lat,
+          currentCoords.lng,
+          a.location.latitude,
+          a.location.longitude,
+        );
+        const distB = calculateDistance(
+          currentCoords.lat,
+          currentCoords.lng,
+          b.location.latitude,
+          b.location.longitude,
+        );
+        return distA - distB;
+      });
+    }
+    return result;
+  }, [restaurants, sortBy, currentCoords]);
 
   // Request location permission for both iOS and Android
   const requestLocationPermission = async () => {
@@ -86,9 +145,10 @@ const FindNearbyResScreen = () => {
     return true;
   };
 
-
   // Get user's current location
   const getCurrentLocation = async () => {
+    setIsPickingLocation(false);
+    googlePlacesRef.current?.setAddressText('');
     const hasPermission = await requestLocationPermission();
 
     if (!hasPermission) {
@@ -210,21 +270,67 @@ const FindNearbyResScreen = () => {
     fetchNearbyRestaurants(currentCoords.lat, currentCoords.lng, key);
   };
 
+  const handleSort = (option: 'rating' | 'distance') => {
+    setSortBy(option);
+    setShowSortDropdown(false);
+  };
+
+  const clearFilters = () => {
+    setSortBy(null);
+    setActiveCategory(categories[0].key);
+    fetchNearbyRestaurants(
+      currentCoords.lat,
+      currentCoords.lng,
+      categories[0].key,
+    );
+    setShowSortDropdown(false);
+  };
+
+  const handleSetLocation = async () => {
+    setLoading(true);
+    try {
+      // Fetch address using reverse geocoding
+      const response = await axios.get(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${tempCoords.lat},${tempCoords.lng}&key=${Config.GOOGLE_MAPS_API_KEY}`,
+      );
+
+      if (response.data.results && response.data.results.length > 0) {
+        setSelectedAddress(response.data.results[0].formatted_address);
+      } else {
+        setSelectedAddress('Custom Location');
+      }
+    } catch (error) {
+      console.error('Error fetching address:', error);
+      setSelectedAddress('Custom Location');
+    }
+
+    setCurrentCoords(tempCoords);
+    setIsPickingLocation(false);
+    googlePlacesRef.current?.setAddressText('');
+    await fetchNearbyRestaurants(tempCoords.lat, tempCoords.lng);
+    // Open bottom sheet after fetching
+    bottomSheetModalRef.current?.present();
+  };
+
   const getCategoryIcon = (key: string, active: boolean) => {
     const iconSize = moderateScale(16);
-    const iconColor = active ? '#1A1A1A' : '#5F6368';
     switch (key) {
       case 'cafe':
-        return <Coffee size={iconSize} color={iconColor} />;
+        return <Cafe width={iconSize} height={iconSize} />;
       case 'restaurant':
-        return <Utensils size={iconSize} color={iconColor} />;
+        return <Restaurant width={iconSize} height={iconSize} />;
       case 'bar':
-        return <Beer size={iconSize} color={iconColor} />;
-      case 'meal_takeaway':
-        return <ShoppingBag size={iconSize} color={iconColor} />;
+        return <Bar width={iconSize} height={iconSize} />;
+      case 'bakery':
+        return <Bakery width={iconSize} height={iconSize} />;
       default:
-        return <Utensils size={iconSize} color={iconColor} />;
+        return <Restaurant width={iconSize} height={iconSize} />;
     }
+  };
+
+  const handleCancelPicking = () => {
+    setIsPickingLocation(false);
+    bottomSheetModalRef.current?.present();
   };
 
   return (
@@ -240,7 +346,14 @@ const FindNearbyResScreen = () => {
 
         <View style={styles.locationTextWrapper}>
           <Text style={styles.offersNearText}>Offers Near</Text>
-          <TouchableOpacity style={styles.locationRow} activeOpacity={0.7}>
+          <TouchableOpacity
+            style={styles.locationRow}
+            activeOpacity={0.7}
+            onPress={() => {
+              Keyboard.dismiss();
+              setShowLocationDropdown(!showLocationDropdown);
+            }}
+          >
             <Text style={styles.locationText} numberOfLines={1}>
               {selectedAddress}
             </Text>
@@ -251,6 +364,7 @@ const FindNearbyResScreen = () => {
 
       <View style={[styles.searchContainer, { zIndex: 1000 }]}>
         <GooglePlacesAutocomplete
+          ref={googlePlacesRef}
           placeholder="Search for Location You Want to Get Offer"
           fetchDetails={true}
           onPress={(data, details = null) => {
@@ -301,17 +415,31 @@ const FindNearbyResScreen = () => {
       </View>
 
       <View style={styles.filterContainer}>
-        <TouchableOpacity style={styles.filterButton} activeOpacity={0.7}>
-          <SlidersHorizontal size={moderateScale(20)} color="#1A1A1A" />
-        </TouchableOpacity>
-        <ScrollView
+        <FlatList
+          data={categories}
           horizontal
           showsHorizontalScrollIndicator={false}
           style={styles.categoryScroll}
-        >
-          {categories.map(cat => (
+          keyExtractor={item => item.key}
+          ListHeaderComponent={
             <TouchableOpacity
-              key={cat.key}
+              style={[
+                styles.filterButton,
+                sortBy && { borderColor: '#7210FF', borderWidth: 1.5 },
+              ]}
+              activeOpacity={0.7}
+              onPress={() => setShowSortDropdown(!showSortDropdown)}
+            >
+              <Filter
+                width={moderateScale(20)}
+                height={moderateScale(20)}
+                fill={sortBy ? '#7210FF' : 'none'}
+              />
+            </TouchableOpacity>
+          }
+          ListFooterComponent={<View style={{ width: moderateScale(16) }} />}
+          renderItem={({ item: cat }) => (
+            <TouchableOpacity
               style={[
                 styles.categoryButton,
                 activeCategory === cat.key && styles.activeCategoryButton,
@@ -329,8 +457,8 @@ const FindNearbyResScreen = () => {
                 {cat.label}
               </Text>
             </TouchableOpacity>
-          ))}
-        </ScrollView>
+          )}
+        />
       </View>
 
       <View style={styles.mapContainer}>
@@ -343,6 +471,14 @@ const FindNearbyResScreen = () => {
             longitude: currentCoords.lng,
             latitudeDelta: 0.05,
             longitudeDelta: 0.05,
+          }}
+          onRegionChangeComplete={region => {
+            if (isPickingLocation) {
+              setTempCoords({
+                lat: region.latitude,
+                lng: region.longitude,
+              });
+            }
           }}
         >
           {/* Place Location Marker */}
@@ -358,7 +494,8 @@ const FindNearbyResScreen = () => {
           </Marker>
 
           {/* Restaurant Markers */}
-          {restaurants?.map(
+          {/* Restaurant Markers */}
+          {sortedRestaurants?.map(
             (res: any) =>
               res.location && (
                 <RestaurantMarker
@@ -375,14 +512,31 @@ const FindNearbyResScreen = () => {
         </MapView>
 
         {/* Floating List Button */}
-        <TouchableOpacity
-          style={styles.listButton}
-          activeOpacity={0.8}
-          onPress={handlePresentModalPress}
-        >
-          <List color="#FFFFFF" size={moderateScale(20)} />
-          <Text style={styles.listButtonText}>List</Text>
-        </TouchableOpacity>
+        {isPickingLocation ? (
+          <View style={styles.pickerActionContainer}>
+            <TouchableOpacity
+              style={styles.cancelButton}
+              onPress={handleCancelPicking}
+            >
+              <Text style={styles.cancelButtonText}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.setButton}
+              onPress={handleSetLocation}
+            >
+              <Text style={styles.setButtonText}>Set Location</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <TouchableOpacity
+            style={styles.listButton}
+            activeOpacity={0.8}
+            onPress={handlePresentModalPress}
+          >
+            <List color="#FFFFFF" size={moderateScale(20)} />
+            <Text style={styles.listButtonText}>List</Text>
+          </TouchableOpacity>
+        )}
 
         {loading && (
           <View
@@ -399,12 +553,45 @@ const FindNearbyResScreen = () => {
             <ActivityIndicator size="small" color="#7210FF" />
           </View>
         )}
+        {isPickingLocation && (
+          <>
+            <View style={styles.markerFixed} pointerEvents="none">
+              <MapPin
+                size={moderateScale(48)}
+                color="#7210FF"
+                fill="rgba(114, 16, 255, 0.3)"
+              />
+            </View>
+          </>
+        )}
       </View>
+
+      <LocationDropdown
+        isVisible={showLocationDropdown}
+        onClose={() => setShowLocationDropdown(false)}
+        onSelectCurrentLocation={getCurrentLocation}
+        onSelectSetOnMap={() => {
+          setIsPickingLocation(true);
+          googlePlacesRef.current?.setAddressText('');
+          // showLocationDropdown is handled by the component closing
+          // Close bottom sheet when picking location to see the map clearly
+          bottomSheetModalRef.current?.dismiss();
+        }}
+      />
+
+      <SortDropdown
+        isVisible={showSortDropdown}
+        onClose={() => setShowSortDropdown(false)}
+        sortBy={sortBy}
+        onSort={handleSort}
+        onClear={clearFilters}
+      />
 
       <ResturantListBottomSheet
         bottomSheetModalRef={bottomSheetModalRef}
-        restaurants={restaurants}
+        restaurants={sortedRestaurants}
         apiKey={Config.GOOGLE_MAPS_API_KEY}
+        loading={loading}
         onPress={() => {}}
         onCancel={() => {}}
       />
