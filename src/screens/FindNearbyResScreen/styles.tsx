@@ -14,6 +14,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     borderBottomWidth: 1,
     borderBottomColor: '#F2F2F2',
+    zIndex: 2000,
   },
   iconContainer: {
     width: moderateScale(35),
@@ -48,6 +49,7 @@ export const styles = StyleSheet.create({
   searchContainer: {
     marginTop: verticalScale(10),
     marginHorizontal: moderateScale(16),
+    zIndex: 1200,
   },
   searchWrapper: {
     flexDirection: 'row',
@@ -112,7 +114,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: verticalScale(12),
-    zIndex: 1,
+    zIndex: 1100,
   },
   filterButton: {
     width: moderateScale(40),

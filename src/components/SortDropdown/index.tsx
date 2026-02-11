@@ -1,13 +1,15 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
-  Modal,
   TouchableWithoutFeedback,
+  Animated,
+  Platform,
 } from 'react-native';
 import { Star, Navigation, X } from 'lucide-react-native';
-import { moderateScale } from 'react-native-size-matters';
+import { moderateScale, verticalScale } from 'react-native-size-matters';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { styles } from './styles';
 
 interface SortDropdownProps {
@@ -25,17 +27,47 @@ const SortDropdown: React.FC<SortDropdownProps> = ({
   onSort,
   onClear,
 }) => {
+  const insets = useSafeAreaInsets();
+  const slideAnim = useRef(new Animated.Value(-300)).current;
+  const [shouldRender, setShouldRender] = React.useState(isVisible);
+
+  useEffect(() => {
+    if (isVisible) {
+      setShouldRender(true);
+      Animated.spring(slideAnim, {
+        toValue: 0,
+        useNativeDriver: true,
+        tension: 50,
+        friction: 8,
+      }).start();
+    } else {
+      Animated.timing(slideAnim, {
+        toValue: -300,
+        duration: 250,
+        useNativeDriver: true,
+      }).start(() => {
+        setShouldRender(false);
+      });
+    }
+  }, [isVisible, slideAnim]);
+
+  if (!shouldRender && !isVisible) return null;
+
+  const topOffset = Platform.OS === 'ios'
+    ? insets.top + verticalScale(150)
+    : verticalScale(155);
+
   return (
-    <Modal
-      visible={isVisible}
-      transparent={true}
-      animationType="fade"
-      onRequestClose={onClose}
-    >
+    <View style={styles.container} pointerEvents={isVisible ? 'auto' : 'none'}>
       <TouchableWithoutFeedback onPress={onClose}>
         <View style={styles.modalOverlay}>
-          <TouchableWithoutFeedback>
-            <View style={styles.dropdownContainer}>
+          <View style={[styles.clippingContainer, { marginTop: topOffset }]}>
+            <Animated.View
+              style={[
+                styles.dropdownContainer,
+                { transform: [{ translateY: slideAnim }] },
+              ]}
+            >
               <View style={styles.header}>
                 <Text style={styles.sortTitle}>Sort By</Text>
                 <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
@@ -89,11 +121,11 @@ const SortDropdown: React.FC<SortDropdownProps> = ({
               <TouchableOpacity style={styles.clearFilterBtn} onPress={onClear}>
                 <Text style={styles.clearFilterText}>Clear Filter</Text>
               </TouchableOpacity>
-            </View>
-          </TouchableWithoutFeedback>
+            </Animated.View>
+          </View>
         </View>
       </TouchableWithoutFeedback>
-    </Modal>
+    </View>
   );
 };
 

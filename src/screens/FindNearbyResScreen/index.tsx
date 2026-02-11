@@ -51,16 +51,16 @@ const FindNearbyResScreen = () => {
   const [loading, setLoading] = useState(false);
   const [activeCategory, setActiveCategory] = useState(categories[0].key);
   const [currentCoords, setCurrentCoords] = useState({
-    lat: 25.1972,
-    lng: 55.2744,
+    lat: 6.914981526151977,
+    lng: 79.85033104704557,
   });
   const [showSortDropdown, setShowSortDropdown] = useState(false);
   const [showLocationDropdown, setShowLocationDropdown] = useState(false);
   const [sortBy, setSortBy] = useState<'rating' | 'distance' | null>(null);
   const [isPickingLocation, setIsPickingLocation] = useState(false);
   const [tempCoords, setTempCoords] = useState({
-    lat: 25.1972,
-    lng: 55.2744,
+    lat: 6.914981526151977,
+    lng: 79.85033104704557,
   });
 
   const mapRef = useRef<MapView>(null);
@@ -152,13 +152,20 @@ const FindNearbyResScreen = () => {
     const hasPermission = await requestLocationPermission();
 
     if (!hasPermission) {
-      Alert.alert(
-        'Permission Denied',
-        'Location permission is required to find nearby restaurants.',
-      );
-      // Use default location if permission denied
-      setSelectedAddress('Colombo');
-      await fetchNearbyRestaurants(currentCoords.lat, currentCoords.lng);
+      if (selectedAddress === 'Getting your location...') {
+        Alert.alert(
+          'Permission Denied',
+          'Location permission is required to find nearby restaurants.',
+        );
+        // Use default location if permission denied
+        setSelectedAddress('Colombo');
+        await fetchNearbyRestaurants(currentCoords.lat, currentCoords.lng);
+      } else {
+        Alert.alert(
+          'Permission Denied',
+          'Please enable location permissions in settings.',
+        );
+      }
       return;
     }
 
@@ -177,25 +184,28 @@ const FindNearbyResScreen = () => {
       },
       async error => {
         console.error('Error getting location:', error);
-
-        // Set default address for fallback
-        setSelectedAddress('Colombo');
+        setLoading(false);
 
         // Show user-friendly message based on error code
-        let errorMessage =
-          'Unable to get your current location. Showing nearby restaurants from default location.';
+        let errorMessage = 'Unable to get your current location.';
         if (error.code === 3) {
-          errorMessage =
-            'Location request timed out. Showing nearby restaurants from default location.';
+          errorMessage = 'Location request timed out.';
         } else if (error.code === 2) {
-          errorMessage =
-            'Location unavailable. Showing nearby restaurants from default location.';
+          errorMessage = 'Location unavailable.';
         }
 
-        Alert.alert('Location Error', errorMessage);
-
-        // Fallback to default location
-        await fetchNearbyRestaurants(currentCoords.lat, currentCoords.lng);
+        if (selectedAddress === 'Getting your location...') {
+          // Set default address for fallback
+          setSelectedAddress('Colombo');
+          Alert.alert(
+            'Location Error',
+            `${errorMessage} Showing nearby restaurants from default location.`,
+          );
+          // Fallback to default location
+          await fetchNearbyRestaurants(currentCoords.lat, currentCoords.lng);
+        } else {
+          Alert.alert('Location Error', errorMessage);
+        }
       },
       {
         enableHighAccuracy: false, // Use network location for faster response
@@ -592,8 +602,8 @@ const FindNearbyResScreen = () => {
         restaurants={sortedRestaurants}
         apiKey={Config.GOOGLE_MAPS_API_KEY}
         loading={loading}
-        onPress={() => {}}
-        onCancel={() => {}}
+        onPress={() => { }}
+        onCancel={() => { }}
       />
     </SafeAreaView>
   );

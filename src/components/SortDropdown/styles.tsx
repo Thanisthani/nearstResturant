@@ -2,24 +2,33 @@ import { StyleSheet } from 'react-native';
 import { moderateScale, verticalScale } from 'react-native-size-matters';
 
 export const styles = StyleSheet.create({
+  container: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 1000,
+  },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'transparent',
   },
+  clippingContainer: {
+    marginTop: verticalScale(155),
+    overflow: 'hidden',
+  },
   dropdownContainer: {
-    position: 'absolute',
-    top: verticalScale(155), // Adjusted to show below filter button
-    left: moderateScale(16),
     backgroundColor: '#FFFFFF',
     borderRadius: moderateScale(12),
     padding: moderateScale(8),
     width: moderateScale(200),
-    elevation: 10,
+    marginLeft: moderateScale(16),
+    elevation: 8,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 10,
-    zIndex: 2000,
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
     borderWidth: 1,
     borderColor: '#F2F2F2',
   },

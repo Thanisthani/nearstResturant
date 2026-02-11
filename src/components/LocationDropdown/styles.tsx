@@ -7,8 +7,8 @@ export const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    zIndex: 5000,
-    pointerEvents: 'box-none', // Very important for toggle
+    zIndex: 1500,
+    pointerEvents: 'box-none',
   },
   clippingContainer: {
     marginTop: verticalScale(60),

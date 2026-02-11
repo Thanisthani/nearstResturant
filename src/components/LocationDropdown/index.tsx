@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, Animated } from 'react-native';
+import { View, Text, TouchableOpacity, Animated, Platform } from 'react-native';
 import { MapPin, Navigation } from 'lucide-react-native';
 import { moderateScale, verticalScale } from 'react-native-size-matters';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { styles } from './styles';
 
 interface LocationDropdownProps {
@@ -17,7 +18,8 @@ const LocationDropdown: React.FC<LocationDropdownProps> = ({
   onSelectCurrentLocation,
   onSelectSetOnMap,
 }) => {
-  const slideAnim = useRef(new Animated.Value(-300)).current; // Slightly more hidden
+  const insets = useSafeAreaInsets();
+  const slideAnim = useRef(new Animated.Value(-300)).current;
 
   useEffect(() => {
     if (isVisible) {
@@ -36,9 +38,11 @@ const LocationDropdown: React.FC<LocationDropdownProps> = ({
     }
   }, [isVisible, slideAnim]);
 
+  const topOffset = Platform.OS === 'ios' ? insets.top + moderateScale(60) : moderateScale(60);
+
   return (
     <View style={styles.container} pointerEvents="box-none">
-      <View style={styles.clippingContainer}>
+      <View style={[styles.clippingContainer, { marginTop: topOffset }]}>
         <Animated.View
           style={[
             styles.dropdownContainer,
