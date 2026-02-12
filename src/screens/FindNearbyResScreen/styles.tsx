@@ -115,7 +115,6 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: verticalScale(12),
-    zIndex: 1100,
   },
   filterButton: {
     width: moderateScale(40),
