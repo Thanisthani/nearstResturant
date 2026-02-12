@@ -147,7 +147,7 @@ npm run ios
 ![WhatsApp Image 2026-02-12 at 10 56 34 PM](https://github.com/user-attachments/assets/dd9ce64c-fbff-4a3e-8e4f-be0967e03cd8)
 
 **iOS:**
-<img width="1206" height="2622" alt="Simulator Screenshot - iPhone 17 Pro - 2026-02-12 at 22 22 29" src="https://github.com/user-attachments/assets/bc21c1f9-82d6-40d7-8ce7-1f2446e72ee0" />
+<img width="603" height="1311" alt="Simulator Screenshot - iPhone 17 Pro - 2026-02-12 at 22 22 29" src="https://github.com/user-attachments/assets/bc21c1f9-82d6-40d7-8ce7-1f2446e72ee0" />
 <img width="1206" height="2622" alt="Simulator Screenshot - iPhone 17 Pro - 2026-02-12 at 22 23 00" src="https://github.com/user-attachments/assets/a1674695-8a92-4a12-8e77-dd67a1ccbd62" />
 <img width="1206" height="2622" alt="Simulator Screenshot - iPhone 17 Pro - 2026-02-12 at 22 23 10" src="https://github.com/user-attachments/assets/927620b3-b9ff-4a80-89ab-fba955ed026f" />
 <img width="1206" height="2622" alt="Simulator Screenshot - iPhone 17 Pro - 2026-02-12 at 22 23 31" src="https://github.com/user-attachments/assets/cac4aac3-060b-4e44-a638-8199554ce04c" />
