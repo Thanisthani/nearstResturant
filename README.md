@@ -4,18 +4,18 @@ Nearest Restaurant Finder is a **React Native** mobile application designed to h
 
 ---
 
-## 🚀 Key Features
+## Key Features
 
-- **📍 Real-time Geolocation**: Automatically detects your current position to find offers and restaurants in your immediate vicinity.
-- **🗺️ Interactive Map**: Explore nearby restaurants with markers displaying ratings directly on the map.
-- **🔍 Smart Search**: Integrated with **Google Places Autocomplete** to search for locations anywhere in the world.
-- **📂 Category Filtering**: Quickly browse through categories like **Cafe**, **Restaurant**, **Bar**, and **Bakery**.
-- **↕️ Filtering**: Sort results by **Rating** or **Distance** to find exactly what you're looking for.
-- **📍 Manual Location Picker**: Set your location manually by dropping a pin anywhere on the map.
+- **Real-time Geolocation**: Automatically detects your current position to find offers and restaurants in your immediate vicinity.
+- **Interactive Map**: Explore nearby restaurants with markers displaying ratings directly on the map.
+- **Smart Search**: Integrated with **Google Places Autocomplete** to search for locations anywhere in the world.
+- **Category Filtering**: Quickly browse through categories like **Cafe**, **Restaurant**, **Bar**, and **Bakery**.
+- **Filtering**: Sort results by **Rating** or **Distance** to find exactly what you're looking for.
+- **Manual Location Picker**: Set your location manually by dropping a pin anywhere on the map.
 
 ---
 
-## 🛠️ Technical Implementation
+## Technical Implementation
 
 For this assignment, I focused on building a scalable, performant, and user-friendly "Restaurant Finder" application. Here are the key technical implementations:
 
@@ -40,7 +40,7 @@ For this assignment, I focused on building a scalable, performant, and user-frie
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 - **Framework**: React Native (0.83.1)
 - **Language**: TypeScript
@@ -52,7 +52,7 @@ For this assignment, I focused on building a scalable, performant, and user-frie
 
 ---
 
-## ⚙️ Setup Instructions
+## Setup Instructions
 
 ### 1. Prerequisites
 
@@ -136,3 +136,10 @@ npm run android
 ```sh
 npm run ios
 ```
+## Screenshots 
+
+**Android:**
+
+
+
+**iOS:**
