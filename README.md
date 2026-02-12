@@ -139,7 +139,17 @@ npm run ios
 ## Screenshots 
 
 **Android:**
-
-
+![WhatsApp Image 2026-02-12 at 10 56 52 PM](https://github.com/user-attachments/assets/7ba81697-84e4-4c00-a186-b80ee4acf355)
+![WhatsApp Image 2026-02-12 at 10 56 51 PM (1)](https://github.com/user-attachments/assets/f1b98e23-860a-4072-a9ae-ec825394407e)
+![WhatsApp Image 2026-02-12 at 10 56 51 PM](https://github.com/user-attachments/assets/a407ff58-9ce2-4df4-ade4-5dc8598ccbac)
+![WhatsApp Image 2026-02-12 at 10 56 36 PM](https://github.com/user-attachments/assets/0c2d0909-b5a8-4402-ac30-932877aca83a)
+![WhatsApp Image 2026-02-12 at 10 56 35 PM](https://github.com/user-attachments/assets/c9b1bd71-d46d-4191-a06c-ca90711c2e40)
+![WhatsApp Image 2026-02-12 at 10 56 34 PM](https://github.com/user-attachments/assets/dd9ce64c-fbff-4a3e-8e4f-be0967e03cd8)
 
 **iOS:**
+<img width="1206" height="2622" alt="Simulator Screenshot - iPhone 17 Pro - 2026-02-12 at 22 22 29" src="https://github.com/user-attachments/assets/bc21c1f9-82d6-40d7-8ce7-1f2446e72ee0" />
+<img width="1206" height="2622" alt="Simulator Screenshot - iPhone 17 Pro - 2026-02-12 at 22 23 00" src="https://github.com/user-attachments/assets/a1674695-8a92-4a12-8e77-dd67a1ccbd62" />
+<img width="1206" height="2622" alt="Simulator Screenshot - iPhone 17 Pro - 2026-02-12 at 22 23 10" src="https://github.com/user-attachments/assets/927620b3-b9ff-4a80-89ab-fba955ed026f" />
+<img width="1206" height="2622" alt="Simulator Screenshot - iPhone 17 Pro - 2026-02-12 at 22 23 31" src="https://github.com/user-attachments/assets/cac4aac3-060b-4e44-a638-8199554ce04c" />
+<img width="1206" height="2622" alt="Simulator Screenshot - iPhone 17 Pro - 2026-02-12 at 22 23 54" src="https://github.com/user-attachments/assets/50cc84d2-fcf9-4591-82ed-94fb2ada0335" />
+<img width="1206" height="2622" alt="Simulator Screenshot - iPhone 17 Pro - 2026-02-12 at 22 24 18" src="https://github.com/user-attachments/assets/50a59cd7-f28a-4752-b716-7bca7054ef14" />
