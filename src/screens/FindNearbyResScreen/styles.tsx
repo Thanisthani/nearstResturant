@@ -39,6 +39,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-start',
+    paddingRight: moderateScale(8),
   },
   locationText: {
     fontFamily: 'Manrope-Bold',
@@ -61,12 +62,12 @@ export const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   searchInput: {
-    fontSize: moderateScale(13),
+    fontSize: moderateScale(12),
     color: '#1A1A1A',
     height: verticalScale(35),
     backgroundColor: 'transparent',
     paddingHorizontal: moderateScale(8),
-    fontFamily: 'Manrope-Bold',
+    fontFamily: 'Manrope-SemiBold',
     flex: 1,
   },
   autocompleteListView: {

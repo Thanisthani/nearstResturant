@@ -4,6 +4,7 @@ import { Marker } from 'react-native-maps';
 import { Plus } from 'lucide-react-native';
 import { moderateScale } from 'react-native-size-matters';
 import { styles } from './styles';
+import Triangle from '../../assets/images/toolTipBottomTriangle.svg';
 
 interface RestaurantMarkerProps {
   name: string;
@@ -22,19 +23,27 @@ const RestaurantMarker = (props: RestaurantMarkerProps) => {
         longitude: props.lng,
       }}
       onPress={props.onPress}
-      tracksViewChanges={false}
-      anchor={{ x: 0.5, y: 1 }} // Ensures triangle tip is on the coordinate
+      tracksViewChanges={true}
+      anchor={{ x: 0.5, y: 1 }}
     >
-      <View style={styles.markerWrapper}>
-        <View style={styles.iconContainer}>
-          <Plus size={moderateScale(12)} color="#FFFFFF" strokeWidth={3} />
+      <View style={styles.markerContainer}>
+        <View style={styles.markerWrapper}>
+          <View style={styles.iconContainer}>
+            <Plus size={moderateScale(12)} color="#FFFFFF" strokeWidth={3} />
+          </View>
+          <View>
+            <Text style={styles.rating}>{props.rating || '0.0'}</Text>
+            <Text style={styles.name} numberOfLines={1}>
+              {props.name}
+            </Text>
+          </View>
         </View>
-        <View>
-          <Text style={styles.rating}>{props.rating || '0.0'}</Text>
-          <Text style={styles.name} numberOfLines={1}>
-            {props.name}
-          </Text>
-        </View>
+
+        <Triangle
+          width={moderateScale(16)}
+          height={moderateScale(12)}
+          style={styles.triangleContainer}
+        />
       </View>
     </Marker>
   );

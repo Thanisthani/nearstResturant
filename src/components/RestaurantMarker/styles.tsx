@@ -2,6 +2,9 @@ import { StyleSheet } from 'react-native';
 import { moderateScale, scale } from 'react-native-size-matters';
 
 export const styles = StyleSheet.create({
+  markerContainer: {
+    alignItems: 'center',
+  },
   markerWrapper: {
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
@@ -39,17 +42,7 @@ export const styles = StyleSheet.create({
     color: '#5F6368',
     maxWidth: scale(200),
   },
-  markerTriangle: {
-    width: 0,
-    height: 0,
-    backgroundColor: 'transparent',
-    borderStyle: 'solid',
-    borderLeftWidth: moderateScale(6),
-    borderRightWidth: moderateScale(6),
-    borderTopWidth: moderateScale(8),
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderTopColor: '#FFFFFF',
-    marginTop: -1,
+  triangleContainer: {
+    marginTop: -moderateScale(2),
   },
 });

@@ -1,97 +1,138 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Nearest Restaurant Finder
 
-# Getting Started
+Nearest Restaurant Finder is a **React Native** mobile application designed to help users discover the best dining spots nearby. Built with **TypeScript**, it leverages the **Google Maps SDK**, **Reverse Geocoding** and **Google Places API** to provide real-time restaurant results, interactive maps, and a seamless user experience.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+---
 
-## Step 1: Start Metro
+## 🚀 Key Features
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+- **📍 Real-time Geolocation**: Automatically detects your current position to find offers and restaurants in your immediate vicinity.
+- **🗺️ Interactive Map**: Explore nearby restaurants with markers displaying ratings directly on the map.
+- **🔍 Smart Search**: Integrated with **Google Places Autocomplete** to search for locations anywhere in the world.
+- **📂 Category Filtering**: Quickly browse through categories like **Cafe**, **Restaurant**, **Bar**, and **Bakery**.
+- **↕️ Filtering**: Sort results by **Rating** or **Distance** to find exactly what you're looking for.
+- **📍 Manual Location Picker**: Set your location manually by dropping a pin anywhere on the map.
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+---
+
+## 🛠️ Technical Implementation
+
+For this assignment, I focused on building a scalable, performant, and user-friendly "Restaurant Finder" application. Here are the key technical implementations:
+
+### 1. Robust Map & Location Integration
+
+- Integrated **React Native Maps** with custom-rendered markers that provide immediate value (displaying restaurant ratings directly on the map).
+- Implemented a dual-mode location system: **Automatic Geolocation** (using device sensors) and a **Manual Location Picker** with a draggable map interface.
+
+### 2. Advanced API Integration (Google Places V1)
+
+- Used the latest **Google Places API (New)** with field masking to optimize data usage and reduce latency.
+- Implemented **Google Places Autocomplete** for a seamless global search experience.
+- Built a custom extraction layer to handle restaurant data.
+
+### 3. UI/UX Elements
+
+- **Real-time Filtering & Sorting**: Developed logic to sort restaurants dynamically by distance (calculated via Haversine formula or API) and rating.
+- **Performance Optimization**: Utilized `Reanimated` for 60fps UI transitions and implemented **Shimmer Loading** to improve perceived performance during data fetching.
+- **Modular Architecture**: Organized the codebase into reusable components, utilities, and screens for maintainability and scalability.
+- **Interactive Bottom Sheet**: Integrated `@gorhom/bottom-sheet` for a native-feel experience when browsing large lists of data.
+- **Responsive Design**: Used `react-native-size-matters` to ensure the UI scale correctly across various screen sizes and orientations.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Framework**: React Native (0.83.1)
+- **Language**: TypeScript
+- **Maps**: React Native Maps (with Google Maps Provider)
+- **State & Logic**: React Hooks & Functional Components
+- **Animations**: React Native Reanimated & Worklets
+- **Icons**: Lucide React Native & Custom SVGs
+- **API**: Axios with Google Places API (New V1) and Reverse Geocoding API
+
+---
+
+## ⚙️ Setup Instructions
+
+### 1. Prerequisites
+
+Ensure you have the following installed:
+
+- [Node.js](https://nodejs.org/) (>= 20)
+- [React Native Environment Setup](https://reactnative.dev/docs/environment-setup)
+- A Google Cloud Project with **Maps SDK for Android/iOS** and **Places API** enabled.
+
+### 2. Installation
+
+Clone the repository and install dependencies:
 
 ```sh
 # Using npm
+npm install
+
+# OR using Yarn
+yarn install
+```
+
+### 3. iOS Configuration
+
+If you are developing for iOS, install the CocoaPods:
+
+```sh
+cd ios && pod install && cd ..
+```
+
+### 4. Google Cloud Platform (GCP) Setup
+
+To use the maps and search functionality, you must configure a project on the [Google Cloud Console](https://console.cloud.google.com/):
+
+#### A. Create a Project & Billing
+
+1. Create a new project named **NearestRestaurant**.
+2. [Link a billing account](https://console.cloud.google.com/billing) (Google provides a $200 free monthly credit).
+
+#### B. Enable Required APIs
+
+You must enable the following APIs for your project:
+
+- **Places API (New)**: For restaurant search and details.
+- **Geocoding API**: For converting coordinates to addresses.
+- **Maps SDK for Android**: For showing maps on Android.
+- **Maps SDK for iOS**: For showing maps on iOS.
+
+#### C. Get Your API Key
+
+1. Go to **APIs & Services > Credentials**.
+2. Click **Create Credentials > API Key**.
+3. Copy the key into your `.env` file.
+4. **Restriction (Highly Recommended):** Click the key details and under **API restrictions**, select only the 4 APIs listed above to prevent unauthorized usage.
+
+### 5. Environment Setup
+
+Create a `.env` file in the root directory and add your Google Maps API Key:
+
+```env
+GOOGLE_MAPS_API_KEY=YOUR_GOOGLE_MAPS_API_KEY
+```
+
+### 6. Running the Application
+
+First, start the Metro Bundler:
+
+```sh
 npm start
-
-# OR using Yarn
-yarn start
 ```
 
-## Step 2: Build and run your app
+Then, run the app on your preferred platform:
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
+**Android:**
 
 ```sh
-# Using npm
 npm run android
-
-# OR using Yarn
-yarn android
 ```
 
-### iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+**iOS:**
 
 ```sh
-bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
 npm run ios
-
-# OR using Yarn
-yarn ios
 ```
-
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
-
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
-
-## Step 3: Modify your app
-
-Now that you have successfully run the app, let's make changes!
-
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
-
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
-
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.

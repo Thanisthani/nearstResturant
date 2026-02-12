@@ -26,6 +26,7 @@ export const styles = StyleSheet.create({
     paddingVertical: moderateScale(10),
     paddingHorizontal: moderateScale(12),
     borderRadius: moderateScale(8),
+    zIndex: 2000,
   },
   optionText: {
     fontFamily: 'Manrope-Medium',

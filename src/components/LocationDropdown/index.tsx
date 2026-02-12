@@ -20,6 +20,8 @@ const LocationDropdown: React.FC<LocationDropdownProps> = ({
 }) => {
   const insets = useSafeAreaInsets();
   const slideAnim = useRef(new Animated.Value(-300)).current;
+  const topOffset =
+    Platform.OS === 'ios' ? insets.top + moderateScale(60) : moderateScale(60);
 
   useEffect(() => {
     if (isVisible) {
@@ -37,8 +39,6 @@ const LocationDropdown: React.FC<LocationDropdownProps> = ({
       }).start();
     }
   }, [isVisible, slideAnim]);
-
-  const topOffset = Platform.OS === 'ios' ? insets.top + moderateScale(60) : moderateScale(60);
 
   return (
     <View style={styles.container} pointerEvents="box-none">

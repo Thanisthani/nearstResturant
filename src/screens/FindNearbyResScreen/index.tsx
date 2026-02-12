@@ -29,7 +29,7 @@ import { moderateScale } from 'react-native-size-matters';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import Config from 'react-native-config';
 import axios from 'axios';
-import { categories } from '../../utils/local_data';
+import { categories } from '../../utils/localData';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import RestaurantMarker from '../../components/RestaurantMarker';
 import ResturantListBottomSheet from '../../components/ResturantListBottomSheet';
@@ -42,6 +42,8 @@ import Bar from '../../assets/icons/ic_bar.svg';
 import Cafe from '../../assets/icons/ic_cafe.svg';
 import Restaurant from '../../assets/icons/ic_restaurant.svg';
 import Filter from '../../assets/icons/ic_filter.svg';
+import { ErrorFlash } from '../../utils/flashMessage';
+import CustomAlert from '../../components/CustomAlert';
 
 const FindNearbyResScreen = () => {
   const [selectedAddress, setSelectedAddress] = useState(
@@ -62,26 +64,31 @@ const FindNearbyResScreen = () => {
     lat: 6.914981526151977,
     lng: 79.85033104704557,
   });
+  const [alertConfig, setAlertConfig] = useState({
+    isVisible: false,
+    title: '',
+    message: '',
+  });
 
   const mapRef = useRef<MapView>(null);
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const googlePlacesRef = useRef<any>(null);
 
-  // Haversine formula to calculate distance between two points in km
+  // Calculate distance
   const calculateDistance = (
     lat1: number,
     lon1: number,
     lat2: number,
     lon2: number,
   ) => {
-    const p = 0.017453292519943295; // Math.PI / 180
+    const p = 0.017453292519943295;
     const c = Math.cos;
     const a =
       0.5 -
       c((lat2 - lat1) * p) / 2 +
       (c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p))) / 2;
 
-    return 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
+    return 12742 * Math.asin(Math.sqrt(a));
   };
 
   const sortedRestaurants = useMemo(() => {
@@ -111,8 +118,6 @@ const FindNearbyResScreen = () => {
   // Request location permission for both iOS and Android
   const requestLocationPermission = async () => {
     if (Platform.OS === 'ios') {
-      // For iOS, permissions are requested automatically when getCurrentPosition is called
-      // We just need to configure the authorization level
       try {
         Geolocation.setRNConfiguration({
           skipPermissionRequests: false,
@@ -121,6 +126,7 @@ const FindNearbyResScreen = () => {
         return true;
       } catch (err) {
         console.warn('iOS configuration error:', err);
+        ErrorFlash('iOS location configuration error');
         return false;
       }
     } else if (Platform.OS === 'android') {
@@ -139,6 +145,7 @@ const FindNearbyResScreen = () => {
         return granted === PermissionsAndroid.RESULTS.GRANTED;
       } catch (err) {
         console.warn('Android permission error:', err);
+        ErrorFlash('Android location permission error');
         return false;
       }
     }
@@ -153,18 +160,20 @@ const FindNearbyResScreen = () => {
 
     if (!hasPermission) {
       if (selectedAddress === 'Getting your location...') {
-        Alert.alert(
-          'Permission Denied',
-          'Location permission is required to find nearby restaurants.',
-        );
-        // Use default location if permission denied
+        setAlertConfig({
+          isVisible: true,
+          title: 'Permission Denied',
+          message:
+            'Location permission is required to find nearby restaurants.',
+        });
         setSelectedAddress('Colombo');
         await fetchNearbyRestaurants(currentCoords.lat, currentCoords.lng);
       } else {
-        Alert.alert(
-          'Permission Denied',
-          'Please enable location permissions in settings.',
-        );
+        setAlertConfig({
+          isVisible: true,
+          title: 'Permission Denied',
+          message: 'Please enable location permissions in settings.',
+        });
       }
       return;
     }
@@ -186,47 +195,31 @@ const FindNearbyResScreen = () => {
         console.error('Error getting location:', error);
         setLoading(false);
 
-        // Show user-friendly message based on error code
         let errorMessage = 'Unable to get your current location.';
         if (error.code === 3) {
           errorMessage = 'Location request timed out.';
         } else if (error.code === 2) {
           errorMessage = 'Location unavailable.';
         }
-
         if (selectedAddress === 'Getting your location...') {
-          // Set default address for fallback
           setSelectedAddress('Colombo');
-          Alert.alert(
-            'Location Error',
+          ErrorFlash(
             `${errorMessage} Showing nearby restaurants from default location.`,
           );
-          // Fallback to default location
           await fetchNearbyRestaurants(currentCoords.lat, currentCoords.lng);
         } else {
-          Alert.alert('Location Error', errorMessage);
+          ErrorFlash(errorMessage);
         }
       },
       {
-        enableHighAccuracy: false, // Use network location for faster response
-        timeout: 10000, // Reduced timeout to 10 seconds
-        maximumAge: 5000, // Accept cached location up to 5 seconds old
+        enableHighAccuracy: false,
+        timeout: 10000,
+        maximumAge: 5000,
       },
     );
   };
 
-  useEffect(() => {
-    // Get current location and fetch restaurants on initial load
-    getCurrentLocation();
-
-    // Present the bottom sheet on mount to showcase the restaurant list
-    bottomSheetModalRef.current?.present();
-  }, []);
-
-  const handlePresentModalPress = useCallback(() => {
-    bottomSheetModalRef.current?.present();
-  }, []);
-
+  // Fetch nearby restaurants
   const fetchNearbyRestaurants = async (
     lat: number,
     lng: number,
@@ -270,36 +263,16 @@ const FindNearbyResScreen = () => {
       setRestaurants(response.data.places || []);
     } catch (error) {
       console.error('Error fetching restaurants (New API):', error);
+      ErrorFlash('Error fetching restaurants');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleCategoryPress = (key: string) => {
-    setActiveCategory(key);
-    fetchNearbyRestaurants(currentCoords.lat, currentCoords.lng, key);
-  };
-
-  const handleSort = (option: 'rating' | 'distance') => {
-    setSortBy(option);
-    setShowSortDropdown(false);
-  };
-
-  const clearFilters = () => {
-    setSortBy(null);
-    setActiveCategory(categories[0].key);
-    fetchNearbyRestaurants(
-      currentCoords.lat,
-      currentCoords.lng,
-      categories[0].key,
-    );
-    setShowSortDropdown(false);
-  };
-
+  // Fetch address using reverse geocoding
   const handleSetLocation = async () => {
     setLoading(true);
     try {
-      // Fetch address using reverse geocoding
       const response = await axios.get(
         `https://maps.googleapis.com/maps/api/geocode/json?latlng=${tempCoords.lat},${tempCoords.lng}&key=${Config.GOOGLE_MAPS_API_KEY}`,
       );
@@ -311,6 +284,7 @@ const FindNearbyResScreen = () => {
       }
     } catch (error) {
       console.error('Error fetching address:', error);
+      ErrorFlash('Error fetching address');
       setSelectedAddress('Custom Location');
     }
 
@@ -318,9 +292,40 @@ const FindNearbyResScreen = () => {
     setIsPickingLocation(false);
     googlePlacesRef.current?.setAddressText('');
     await fetchNearbyRestaurants(tempCoords.lat, tempCoords.lng);
-    // Open bottom sheet after fetching
     bottomSheetModalRef.current?.present();
   };
+
+  const handleCategoryPress = (key: string) => {
+    setActiveCategory(key);
+    fetchNearbyRestaurants(currentCoords.lat, currentCoords.lng, key);
+  };
+
+  // Handle sort
+  const handleSort = (option: 'rating' | 'distance') => {
+    setSortBy(option);
+    setShowSortDropdown(false);
+  };
+
+  // Clear filters
+  const clearFilters = () => {
+    setSortBy(null);
+    setActiveCategory(categories[0].key);
+    fetchNearbyRestaurants(
+      currentCoords.lat,
+      currentCoords.lng,
+      categories[0].key,
+    );
+    setShowSortDropdown(false);
+  };
+
+  // Show resturant lists
+  const handlePresentModalPress = useCallback(() => {
+    bottomSheetModalRef.current?.present();
+  }, []);
+
+  const handleCloseModalPress = useCallback(() => {
+    bottomSheetModalRef.current?.dismiss();
+  }, []);
 
   const getCategoryIcon = (key: string, active: boolean) => {
     const iconSize = moderateScale(16);
@@ -338,10 +343,16 @@ const FindNearbyResScreen = () => {
     }
   };
 
+  // Handle cancel set location on map
   const handleCancelPicking = () => {
     setIsPickingLocation(false);
-    bottomSheetModalRef.current?.present();
+    handlePresentModalPress();
   };
+
+  useEffect(() => {
+    getCurrentLocation();
+    handlePresentModalPress();
+  }, []);
 
   return (
     <SafeAreaView style={[styles.container, { flex: 1 }]}>
@@ -504,7 +515,6 @@ const FindNearbyResScreen = () => {
           </Marker>
 
           {/* Restaurant Markers */}
-          {/* Restaurant Markers */}
           {sortedRestaurants?.map(
             (res: any) =>
               res.location && (
@@ -583,9 +593,7 @@ const FindNearbyResScreen = () => {
         onSelectSetOnMap={() => {
           setIsPickingLocation(true);
           googlePlacesRef.current?.setAddressText('');
-          // showLocationDropdown is handled by the component closing
-          // Close bottom sheet when picking location to see the map clearly
-          bottomSheetModalRef.current?.dismiss();
+          handleCloseModalPress();
         }}
       />
 
@@ -602,8 +610,15 @@ const FindNearbyResScreen = () => {
         restaurants={sortedRestaurants}
         apiKey={Config.GOOGLE_MAPS_API_KEY}
         loading={loading}
-        onPress={() => { }}
-        onCancel={() => { }}
+        onPress={() => {}}
+        onCancel={() => {}}
+      />
+
+      <CustomAlert
+        isVisible={alertConfig.isVisible}
+        onClose={() => setAlertConfig({ ...alertConfig, isVisible: false })}
+        title={alertConfig.title}
+        message={alertConfig.message}
       />
     </SafeAreaView>
   );
