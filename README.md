@@ -139,6 +139,8 @@ npm run ios
 ## Screenshots 
 
 **Android:**
+
+<img width="301" height="655" alt="Simulator Screenshot - iPhone 17 Pro - 2026-02-12 at 22 22 29" src="https://github.com/user-attachments/assets/7ba81697-84e4-4c00-a186-b80ee4acf355" />
 ![WhatsApp Image 2026-02-12 at 10 56 52 PM](https://github.com/user-attachments/assets/7ba81697-84e4-4c00-a186-b80ee4acf355)
 ![WhatsApp Image 2026-02-12 at 10 56 51 PM (1)](https://github.com/user-attachments/assets/f1b98e23-860a-4072-a9ae-ec825394407e)
 ![WhatsApp Image 2026-02-12 at 10 56 51 PM](https://github.com/user-attachments/assets/a407ff58-9ce2-4df4-ade4-5dc8598ccbac)
